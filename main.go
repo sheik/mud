@@ -95,16 +95,18 @@ func mainCode() error {
 					}
 					app.Stop()
 				case "/connect":
-					fmt.Fprintf(textView, "[white]Connecting to %s", parts[1])
+					fmt.Fprintf(textView, "[green]Connecting to %s[white]\n", parts[1])
 					host := parts[1]
 					if len(parts) == 2 {
 						go func(){
 							var err error
 							conn, err = net.Dial("tcp", host)
 							if err != nil {
-								fmt.Fprintf(textView, "[red]%s[white]", err)
+								fmt.Fprintf(textView, "[red]%s[white]\n", err)
+								app.Draw()
+								return
 							}
-							fmt.Fprintf(textView, "[white]Connected!")
+							fmt.Fprintf(textView, "[green]Connected![white]")
 							connected = true
 							app.Draw()
 							buf := make([]byte, 10000)
