@@ -11,10 +11,10 @@ import (
 )
 
 var (
-	exitCode = 0
-	conn net.Conn
+	exitCode  = 0
+	conn      net.Conn
 	connected = false
-	history []string
+	history   []string
 )
 
 func main() {
@@ -43,7 +43,7 @@ func mainCode() error {
 	input.SetDoneFunc(func(key tcell.Key) {
 
 		// mini state machine to control input box
-		switch(inputState) {
+		switch inputState {
 		case "READY":
 			if key == tcell.KeyUp {
 				if len(history) > 0 {
@@ -54,17 +54,17 @@ func mainCode() error {
 			}
 		case "HISTORY_SCROLL":
 			if key == tcell.KeyUp {
-				if historyPointer >= 1 && historyPointer <= len(history) - 1 {
+				if historyPointer >= 1 && historyPointer <= len(history)-1 {
 					historyPointer = historyPointer - 1
 					input.SetText(history[historyPointer])
 				}
 			} else if key == tcell.KeyDown {
-				if historyPointer >= 0 && historyPointer <= len(history) - 2 {
+				if historyPointer >= 0 && historyPointer <= len(history)-2 {
 					historyPointer = historyPointer + 1
 					input.SetText(history[historyPointer])
 				}
 			} else {
-				inputState ="READY"
+				inputState = "READY"
 			}
 		}
 
@@ -73,7 +73,7 @@ func mainCode() error {
 
 			if len(buffer) == 0 {
 				if connected {
-					fmt.Fprintf(conn,"\r\n")
+					fmt.Fprintf(conn, "\r\n")
 				}
 				return
 			}
@@ -98,7 +98,7 @@ func mainCode() error {
 					fmt.Fprintf(textView, "[green]Connecting to %s[white]\n", parts[1])
 					host := parts[1]
 					if len(parts) == 2 {
-						go func(){
+						go func() {
 							var err error
 							conn, err = net.Dial("tcp", host)
 							if err != nil {
@@ -151,7 +151,7 @@ func mainCode() error {
 			} else {
 				fmt.Fprintf(textView, "%s\n", buffer)
 				if connected {
-					fmt.Fprintf(conn,"%s\r\n", buffer)
+					fmt.Fprintf(conn, "%s\r\n", buffer)
 				}
 			}
 
