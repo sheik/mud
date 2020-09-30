@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/gdamore/tcell"
-	"github.com/rivo/tview"
 	"io"
 	"net"
 	"os"
 	"strings"
+
+	"github.com/gdamore/tcell"
+	"github.com/rivo/tview"
 )
 
 var (
@@ -18,11 +19,11 @@ var (
 )
 
 func main() {
-	err := mainCode()
-	if err != nil {
+	if err := mainCode(); err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
+	} else {
+		os.Exit(exitCode)
 	}
-	os.Exit(exitCode)
 }
 
 func mainCode() error {
@@ -91,11 +92,12 @@ func mainCode() error {
 				switch parts[0] {
 				case "/quit":
 					if connected {
+						fmt.Fprintf(textView, "[red]Disconnected.[white]\n")
 						conn.Close()
 					}
 					app.Stop()
 				case "/connect":
-					fmt.Fprintf(textView, "[green]Connecting to %s[white]\n", parts[1])
+					fmt.Fprintf(textView, "[green]Connecting to %s[white]...\n", parts[1])
 					host := parts[1]
 					if len(parts) == 2 {
 						go func() {
@@ -106,7 +108,7 @@ func mainCode() error {
 								app.Draw()
 								return
 							}
-							fmt.Fprintf(textView, "[green]Connected![white]")
+							fmt.Fprintf(textView, "[green]Connected![white]\n")
 							connected = true
 							app.Draw()
 							buf := make([]byte, 10000)
@@ -114,7 +116,7 @@ func mainCode() error {
 							for {
 								n, err := conn.Read(buf)
 								if err == io.EOF {
-									fmt.Fprintf(textView, "[red]disconnected[white]")
+									fmt.Fprintf(textView, "[red]Disconnected.[white]")
 									app.Draw()
 									return
 								}
